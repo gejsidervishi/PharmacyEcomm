@@ -6,9 +6,11 @@ import com.example.springFarmaci.repository.RoleRepository;
 import com.example.springFarmaci.repository.UserRepository;
 import com.example.springFarmaci.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -65,6 +67,9 @@ public class UserService {
     public void deleteUser(Long id) {
         Optional<User> user = userRepository.findById(id);
         if(user.isPresent()) {
+            for(Roles role:user.get().getRoles()) {
+                user.get().removeRole(role);
+            }
             userRepository.deleteById(id);
         }
 
