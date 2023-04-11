@@ -62,9 +62,12 @@ public class ProductService {
     }
 
     public void deleteProduct(Long id) {
-        Product product = productRepository.findById(id).orElse(null);
-        product.setToDate(new Date());
-        productRepository.save(product);
+        Optional<Product> product = productRepository.findById(id);
+        if(product.isPresent()) {
+            product.get().setToDate(new Date());
+            productRepository.delete(product.get());
+        }
+
     }
 
     public Product addProduct(ProductDTO productDTO) {
@@ -89,8 +92,6 @@ public class ProductService {
             } else {
                 throw new NoSuchElementException("No such element");
             }
-
-
     }
 
     @Transactional
